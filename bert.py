@@ -2,6 +2,7 @@
 import tensorflow as tf
 from transformers import BertTokenizer, TFBertModel, BertConfig
 from tqdm import tqdm
+import numpy as np
 
 class GR_BERT():
   ancient_backbone = "pranaydeeps/Ancient-Greek-BERT"
