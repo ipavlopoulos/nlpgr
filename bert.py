@@ -1,4 +1,8 @@
 # requires transformers tokenizers
+import tensorflow as tf
+from transformers import BertTokenizer, TFBertModel, BertConfig
+from tqdm import tqdm
+
 class GR_BERT():
   ancient_backbone = "pranaydeeps/Ancient-Greek-BERT"
   modern_backbone = "nlpaueb/bert-base-greek-uncased-v1"
