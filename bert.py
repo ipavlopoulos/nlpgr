@@ -18,7 +18,8 @@ class GR_BERT():
                  backbone=modern_backbone,
                  session=None,
                  dense_activation = None,
-                 loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+                 dense_nodes = 1,
+                 loss=tf.keras.losses.BinaryCrossentropy(from_logits=True), # set to 'CategoricalCrossentropy' if dense_nodes>1
                  monitor_loss = 'val_bce',
                  monitor_mode = 'min',
                  from_pt = False,
@@ -45,7 +46,8 @@ class GR_BERT():
         self.loss = loss
         self.monitor_loss = monitor_loss
         self.monitor_mode = monitor_mode
-        self.dense_activation = dense_activation
+        self.dense_activation = dense_activation # set to 'softmax' if dense_nodes>1
+        self.dense_nodes = dense_nodes
         self.earlystop = tf.keras.callbacks.EarlyStopping(monitor=self.monitor_loss,
                                                             patience=self.patience,
                                                             verbose=1,
@@ -86,7 +88,7 @@ class GR_BERT():
     bert_output = self.BERT(bert_inputs).last_hidden_state
     bert_output = bert_output[:,0,:] #take only the embedding of the CLS token
     x = tf.keras.layers.Dense(128, activation='tanh')(bert_output)
-    pred = tf.keras.layers.Dense(1, activation=self.dense_activation, name='classifier')(x)
+    pred = tf.keras.layers.Dense(self.dense_nodes, activation=self.dense_activation, name='classifier')(x)
     self.model = tf.keras.models.Model(inputs=bert_inputs, outputs=pred)
     self.model.compile(loss=self.loss,
                       optimizer=tf.keras.optimizers.Adam(learning_rate=self.lr),
